@@ -72,7 +72,7 @@ Left-click a buff bar button to cast a Greater Blessing. Right-click to cast a n
 [PallyPowerTW Addon Wiki](https://github.com/ivanovlk/PallyPowerTW/wiki/PallyPowerTW-Addon-Wiki)
 
 ## Changelog
-
+- 09.04.26 - Add paladin selector to Assignment Grid top-left area. This way you can display specific paladin's individual blessings assignment (fix for feature request #25) 
 - 01.03.26 - Event-driven scanning replaces timer-based polling (zero CPU cost when idle). TurtleWoW realm detection for correct blessing durations (also vanilla 1.12.1 compatible). New `/pp lock` slash command for toggling frame positions. Scan frequency repurposed as UI debounce interval (clamped to max 2s). Removed obsolete "Poll Per Frame" setting. Slash commands documented in README.
 - 25.08.25 - If Salvation is assigned, user is tank, and no individual blessings, do not count against need (so the BuffBar button stays green even with tank missing Salvation).
 - 25.08.25 - Assign/clear raid icon when player is marked as tank if we are Raid Leader/Assist or party leader.
