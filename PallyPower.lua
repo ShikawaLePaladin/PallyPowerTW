@@ -29,6 +29,8 @@ PallyPower_Healers = {}
 
 PallyPower = {}
 
+PP_SelectedPally = nil  -- currently viewed paladin in the selector
+
 BlessingIcon = {}
 BuffIcon = {}
 AuraIcons = {}
@@ -674,6 +676,7 @@ function PallyPower_SlashCommandHandler(msg)
     if PallyPowerFrame:IsVisible() then
         PallyPowerFrame:Hide()
     else
+        PP_SelectedPally = UnitName("player")
         PallyPowerFrame:Show()
     end
     uiDirty = true
@@ -742,6 +745,14 @@ function PallyPower_TableLength(T)
     end
 end
 
+function PallyPowerPallySelectorButton_OnClick(btn)
+    local pname = getglobal(btn:GetName() .. "Text"):GetText()
+    if pname and pname ~= "" then
+        PP_SelectedPally = pname
+        uiDirty = true
+    end
+end
+
 function PallyPowerGrid_Update(tdiff)
     if not initialized then
         PallyPower_ScanSpells()
@@ -750,6 +761,11 @@ function PallyPowerGrid_Update(tdiff)
         PallyPowerFrameResizeButton:Hide()
     else
         PallyPowerFrameResizeButton:Show()
+    end
+
+    -- Ensure PP_SelectedPally is valid
+    if not PP_SelectedPally or not AllPallys[PP_SelectedPally] then
+        PP_SelectedPally = UnitName("player")
     end
 
     for i = 0, 9 do
@@ -762,9 +778,24 @@ function PallyPowerGrid_Update(tdiff)
     local i = 1
     local numPallys = 0
     local name, skills
+    local selfName = UnitName("player")
+
+    -- Build sorted pally list: player first, then alphabetical
+    local sortedPallys = {}
+    for pname, _ in AllPallys do
+        table.insert(sortedPallys, pname)
+    end
+    table.sort(sortedPallys, function(a, b)
+        if a == b then return false end
+        if a == selfName then return true end
+        if b == selfName then return false end
+        return a < b
+    end)
+
     if PallyPowerFrame:IsVisible() then
         PallyPowerFrame:SetScale(PP_PerUser.scalemain)
-        for name, skills in AllPallys do
+        for _, name in sortedPallys do
+            local skills = AllPallys[name]
             getglobal("PallyPowerFramePlayer" .. i .. "Name"):SetText(name)
             getglobal("PallyPowerFramePlayer" .. i .. "InGroup"):SetText(PallyPower_GetPlayerGroupID(name))
 
@@ -850,8 +881,36 @@ function PallyPowerGrid_Update(tdiff)
 
         local numMaxClass = 0
         local currentPlayer = 0
-        local assign = PallyPower_Assignments[UnitName("player")]
-        local player = UnitName("player")
+        local assign = PallyPower_Assignments[PP_SelectedPally]
+        local player = PP_SelectedPally
+
+        -- Populate paladin selector buttons (top-left of frame)
+        -- sortedPallys is already built above (player first, then alphabetical)
+        local pallyNum = table.getn(sortedPallys)
+        for idx = 1, pallyNum do
+            local pname = sortedPallys[idx]
+            if idx <= 12 then
+                local selBtn = getglobal("PallyPowerFramePallySelector" .. idx)
+                if selBtn then
+                    getglobal("PallyPowerFramePallySelector" .. idx .. "Text"):SetText(pname)
+                    if pname == PP_SelectedPally then
+                        getglobal("PallyPowerFramePallySelector" .. idx .. "Text"):SetTextColor(1, 0.82, 0) -- gold for selected
+                    elseif pname == selfName then
+                        getglobal("PallyPowerFramePallySelector" .. idx .. "Text"):SetTextColor(0.4, 0.8, 1) -- light blue for self
+                    else
+                        getglobal("PallyPowerFramePallySelector" .. idx .. "Text"):SetTextColor(1, 1, 1)
+                    end
+                    selBtn:Show()
+                end
+            end
+        end
+        for k = pallyNum + 1, 12 do
+            local selBtn = getglobal("PallyPowerFramePallySelector" .. k)
+            if selBtn then
+                getglobal("PallyPowerFramePallySelector" .. k .. "Text"):SetText("")
+                selBtn:Hide()
+            end
+        end
 
         for ii = 1, PALLYPOWER_MAXCLASSES do
             currentPlayer = 0
@@ -955,20 +1014,22 @@ function PallyPower_mod(a, b)
 end
 
 function PallyPower_PerformPlayerCycle(delta, pname, class)
-    if PallyPower_Assignments[UnitName("player")][class] == -1 then return end
+    local selPally = PP_SelectedPally or UnitName("player")
+    if not PallyPower_CanControl(selPally) then return end
+    if not PallyPower_Assignments[selPally] then return end
+    if PallyPower_Assignments[selPally][class] == -1 then return end
 	local blessing = 0
-    local player = UnitName("player")
 	if not PP_IsPally then
 		return
 	end
-	if PallyPower_NormalAssignments[player] and PallyPower_NormalAssignments[player][class] and PallyPower_NormalAssignments[player][class][pname] then
-		blessing = PallyPower_NormalAssignments[player][class][pname]
+	if PallyPower_NormalAssignments[selPally] and PallyPower_NormalAssignments[selPally][class] and PallyPower_NormalAssignments[selPally][class][pname] then
+		blessing = PallyPower_NormalAssignments[selPally][class][pname]
     else
         blessing = -1
 	end
 
     for test = blessing + 1, 6 do
-        if PallyPower_CanBuff(player, test) and (PallyPower_NeedsBuff(class, test) or IsShiftKeyDown()) then
+        if PallyPower_CanBuff(selPally, test) and (PallyPower_NeedsBuff(class, test) or IsShiftKeyDown()) then
             blessing = test
             do
                 break
@@ -980,7 +1041,8 @@ function PallyPower_PerformPlayerCycle(delta, pname, class)
         blessing = -1
     end
 
-    SetNormalBlessings(player, class, pname, blessing)
+    SetNormalBlessings(selPally, class, pname, blessing)
+    PallyPower_SendMessage("NASSIGN " .. selPally .. " " .. class .. " " .. pname .. " " .. blessing)
 end
 
 function PallyPowerPlayerButton_OnMouseWheel(btn, arg1)
@@ -1020,11 +1082,17 @@ function PallyPowerPlayerButton_OnClick(plbtn, mouseBtn)
         local _, _, class, pnum = strfind(plbtn:GetName(), "PallyPowerFrameClassGroup(.+)PlayerButton(.+)")
         class = tonumber(class) - 1 --class 0 == button 1
         local pname = getglobal(plbtn:GetName() .. "Text"):GetText()
+        local selPally = PP_SelectedPally or UnitName("player")
         if mouseBtn == "RightButton" then
-            if PallyPower_NormalAssignments[UnitName("player")] and 
-               PallyPower_NormalAssignments[UnitName("player")][class] and 
-               PallyPower_NormalAssignments[UnitName("player")][class][pname] then
-                PallyPower_NormalAssignments[UnitName("player")][class][pname] = -1
+            if not PallyPower_CanControl(selPally) then
+                uiDirty = true
+                return
+            end
+            if PallyPower_NormalAssignments[selPally] and 
+               PallyPower_NormalAssignments[selPally][class] and 
+               PallyPower_NormalAssignments[selPally][class][pname] then
+                PallyPower_NormalAssignments[selPally][class][pname] = -1
+                PallyPower_SendMessage("NASSIGN " .. selPally .. " " .. class .. " " .. pname .. " -1")
             end
             uiDirty = true
         elseif mouseBtn == "LeftButton" then
@@ -1820,7 +1888,20 @@ function PallyPower_SendSelf()
     for name, _ in pairs(PallyPower_Healers) do
         msg = "HEALER " .. name
         PallyPower_SendMessage(msg)
-    end    
+    end
+    -- Send individual (normal) assignments
+    local nameplayer = UnitName("player")
+    if PallyPower_NormalAssignments[nameplayer] then
+        for class = 0, 9 do
+            if PallyPower_NormalAssignments[nameplayer][class] then
+                for tname, blessing in pairs(PallyPower_NormalAssignments[nameplayer][class]) do
+                    if blessing and blessing ~= -1 then
+                        PallyPower_SendMessage("NASSIGN " .. nameplayer .. " " .. class .. " " .. tname .. " " .. blessing)
+                    end
+                end
+            end
+        end
+    end
 end
 
 function PallyPower_SendVersion()
@@ -2091,6 +2172,22 @@ function PallyPower_ParseMessage(sender, msg)
             end
             uiDirty = true
         end
+        if string.find(msg, "^NASSIGN") then
+            -- NASSIGN targetPally class playerName blessing  - individual blessing assignment
+            local _, _, name, class, tname, skill = string.find(msg, "^NASSIGN (%S+) (%S+) (%S+) (%S+)")
+            if name and class and tname and skill then
+                if name ~= sender and not (PallyPower_CheckRaidLeader(sender) or PP_PerUser.freeassign) then
+                    -- not allowed
+                else
+                    local classNum = tonumber(class)
+                    local skillNum = tonumber(skill)
+                    if classNum and skillNum then
+                        SetNormalBlessings(name, classNum, tname, skillNum)
+                        uiDirty = true
+                    end
+                end
+            end
+        end
         if string.find(msg, "^SYMCOUNT ([0-9]*)") then
             local _, _, count = string.find(msg, "^SYMCOUNT ([0-9]*)")
             if AllPallys[sender] then
@@ -2282,10 +2379,12 @@ function PallyPowerBuffBar_MouseUp()
             abs(PallyPowerBuffBar.startPosX - PallyPowerBuffBar:GetLeft()) < 2 and
                 abs(PallyPowerBuffBar.startPosY - PallyPowerBuffBar:GetTop()) < 2
         then
+            PP_SelectedPally = UnitName("player")
             PallyPowerFrame:Show()
             uiDirty = true
         end
     else
+        PP_SelectedPally = UnitName("player")
         PallyPowerFrame:Show()
         uiDirty = true
     end

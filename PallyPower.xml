@@ -1808,6 +1808,199 @@
 					<Anchor point="TOPLEFT" relativeTo="$parentPlayer11" relativePoint="BOTTOMLEFT" />
 				</Anchors>
 			</Frame>
+			<!-- Paladin Selector Buttons (top-left empty space) -->
+			<Button name="$parentPallySelector1" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT"><Offset><AbsDimension x="8" y="-24" /></Offset></Anchor>
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector2" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector1" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector3" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector2" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector4" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector3" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector5" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector4" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector6" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector5" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector7" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector6" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector8" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector7" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector9" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector8" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector10" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector9" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector11" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector10" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentPallySelector12" enableMouse="true">
+				<Size><AbsDimension x="120" y="13" /></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentPallySelector11" relativePoint="BOTTOMLEFT" />
+				</Anchors>
+				<Layers><Layer level="OVERLAY">
+					<FontString name="$parentText" inherits="GameFontHighlightSmall" justifyH="LEFT">
+						<Size><AbsDimension x="114" y="13" /></Size>
+						<Anchors><Anchor point="LEFT"><Offset><AbsDimension x="2" y="0" /></Offset></Anchor></Anchors>
+					</FontString>
+				</Layer></Layers>
+				<Scripts>
+					<OnLoad>this:RegisterForClicks("LeftButtonUp");</OnLoad>
+					<OnClick>PallyPowerPallySelectorButton_OnClick(this)</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
