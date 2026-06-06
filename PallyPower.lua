@@ -1,6 +1,6 @@
 local initialized = false
 
-local TURTLE_REALMS = { Nordanaar=true, ["Tel'Abim"]=true, Ambershire=true, ["South Seas"]=true}
+local TURTLE_REALMS = { Nordanaar=true, ["Tel'Abim"]=true, Ambershire=true, ["South Seas"]=true, ["N'Zoth"]=true}
 local IS_TURTLE = TURTLE_REALMS[GetRealmName()] or false
 
 PALLYPOWER_GREATERBLESSINGDURATION = IS_TURTLE and (30 * 60) or (15 * 60)
