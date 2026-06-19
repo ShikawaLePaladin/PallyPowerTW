@@ -3188,6 +3188,15 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
         end
     end
     local LastRecentCast = RecentCast
+    if not CurrentBuffs[btn.classID] then
+        SpellStopTargeting()
+        TargetLastTarget()
+        PallyPower_ShowFeedback(
+            format(PallyPower_CouldntFind, PallyPower_BlessingID[btn.buffID], PallyPower_ClassID[btn.classID]),
+            1, 1, 0
+        )
+        return
+    end
     for unit, stats in CurrentBuffs[btn.classID] do
         castspelloverride = -1
         if RecentCast ~= LastRecentCast then
@@ -3220,7 +3229,8 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
         end
 
         if
-            SpellCanTargetUnit(unit) and (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
+            (SpellCanTargetUnit(unit) or UnitIsUnit(unit, "player")) and
+                (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
                 not (RecentCast and string.find(table.concat(LastCastOn[btn.classID], " "), unit)) and
                 (not PallyPower_CastingSalvationOnTank(unit, castspellid, castspelloverride))
         then
@@ -3408,7 +3418,8 @@ function PallyPower_AutoBless(mousebutton)
                 end
 
                 if
-                        SpellCanTargetUnit(unit) and (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
+                        (SpellCanTargetUnit(unit) or UnitIsUnit(unit, "player")) and
+                            (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
                             not (RecentCast and string.find(table.concat(LastCastOn[btn.classID], " "), unit)) and
                             (not PallyPower_CastingSalvationOnTank(unit, castspellid, castspelloverride))
                 then
