@@ -3236,19 +3236,33 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
         then
             PP_Debug("Trying to cast on " .. unit)
 
+            -- For right-click: if this unit has an individual blessing, switch to it now
+            local activeBlessID = btn.buffID
+            if mousebtn == "RightButton" then
+                local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
+                if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
+                    local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
+                    if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
+                        SpellStopTargeting()
+                        CastSpell(indSmall, BOOKTYPE_SPELL)
+                        activeBlessID = individualID
+                    end
+                end
+            end
+
             SpellTargetUnit(unit)
             recentCastProtection = 2
             uiDirty = true
 
             if (RegularBlessings == true) then
-                LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                LastCast[activeBlessID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
                 LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
             else
                 if (mousebtn == "LeftButton" and not(AllPallys[UnitName("player")][btn.buffID]["id"] == AllPallys[UnitName("player")][btn.buffID]["idsmall"])) then
-                    LastCast[btn.buffID .. btn.classID] = PALLYPOWER_GREATERBLESSINGDURATION
+                    LastCast[activeBlessID .. btn.classID] = PALLYPOWER_GREATERBLESSINGDURATION
                 else
-                    if LastCast[btn.buffID .. btn.classID] == nil or LastCast[btn.buffID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
-                        LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                    if LastCast[activeBlessID .. btn.classID] == nil or LastCast[activeBlessID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
+                        LastCast[activeBlessID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
                     end
                 end
                 LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
@@ -3285,7 +3299,7 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
             PallyPower_ShowFeedback(
                 format(
                     PallyPower_Casting,
-                    PallyPower_BlessingID[btn.buffID],
+                    PallyPower_BlessingID[activeBlessID],
                     PallyPower_ClassID[btn.classID],
                     UnitName(unit)
                 ), 0, 1, 0 -- Green color for feedback
@@ -3425,19 +3439,33 @@ function PallyPower_AutoBless(mousebutton)
                 then
                     PP_Debug("Trying to cast on " .. unit)
 
+                    -- For Hotkey1 (small blessing): if this unit has an individual blessing, switch to it now
+                    local activeBlessID = btn.buffID
+                    if mousebutton == "Hotkey1" then
+                        local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
+                        if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
+                            local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
+                            if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
+                                SpellStopTargeting()
+                                CastSpell(indSmall, BOOKTYPE_SPELL)
+                                activeBlessID = individualID
+                            end
+                        end
+                    end
+
                     SpellTargetUnit(unit)
                     recentCastProtection = 2
                     uiDirty = true
 
                     if (RegularBlessings == true) then
-                        LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                        LastCast[activeBlessID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
                         LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
                     else
                         if (mousebutton == "Hotkey2" and not(AllPallys[UnitName("player")][btn.buffID]["id"] == AllPallys[UnitName("player")][btn.buffID]["idsmall"])) then
-                            LastCast[btn.buffID .. btn.classID] = PALLYPOWER_GREATERBLESSINGDURATION
+                            LastCast[activeBlessID .. btn.classID] = PALLYPOWER_GREATERBLESSINGDURATION
                         else
-                            if LastCast[btn.buffID .. btn.classID] == nil or LastCast[btn.buffID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
-                                LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                            if LastCast[activeBlessID .. btn.classID] == nil or LastCast[activeBlessID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
+                                LastCast[activeBlessID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
                             end
                         end
                         LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
@@ -3473,7 +3501,7 @@ function PallyPower_AutoBless(mousebutton)
                     PallyPower_ShowFeedback(
                         format(
                             PallyPower_Casting,
-                            PallyPower_BlessingID[btn.buffID],
+                            PallyPower_BlessingID[activeBlessID],
                             PallyPower_ClassID[btn.classID],
                             UnitName(unit)
                         ), 0, 1, 0 --Green feedback for casting
