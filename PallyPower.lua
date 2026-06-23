@@ -1519,7 +1519,9 @@ function PallyPower_UpdateUI()
                         BuffNum = BuffNum + 1
                         if PP_PerUser.colorbuffbar then
                             -- New coloring scheme: Red when missing, Yellow when partially blessed, Transparent when fully blessed
-                            if (nhave == 0) then
+                            -- Use nhave_class for red check: don't go red if the class blessing is active,
+                            -- even when some members still need their individual assignment
+                            if (nhave_class == 0) then
                                 btn:SetBackdropColor(1, 0, 0, PP_PerUser.transparency)
                             elseif (nneed > 0 or ndead > 0) then
                                 btn:SetBackdropColor(1, 1, 0, PP_PerUser.transparency)
@@ -1528,7 +1530,7 @@ function PallyPower_UpdateUI()
                             end
                         else
                             -- Original coloring scheme
-                            if (nhave == 0) then
+                            if (nhave_class == 0) then
                                 btn:SetBackdropColor(1, 0, 0, PP_PerUser.transparency)
                             elseif (nneed > 0 or ndead > 0) then
                                 btn:SetBackdropColor(1, 1, 0.5, PP_PerUser.transparency)
