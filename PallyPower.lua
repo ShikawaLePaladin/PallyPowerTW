@@ -3236,14 +3236,13 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
         then
             PP_Debug("Trying to cast on " .. unit)
 
-            -- For right-click: if this unit has an individual blessing, switch to it now
+            -- For right-click: if this unit has an individual blessing, override the pending spell now
             local activeBlessID = btn.buffID
             if mousebtn == "RightButton" then
                 local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
                 if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
                     local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
                     if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
-                        SpellStopTargeting()
                         CastSpell(indSmall, BOOKTYPE_SPELL)
                         activeBlessID = individualID
                     end
@@ -3439,14 +3438,13 @@ function PallyPower_AutoBless(mousebutton)
                 then
                     PP_Debug("Trying to cast on " .. unit)
 
-                    -- For Hotkey1 (small blessing): if this unit has an individual blessing, switch to it now
+                    -- For Hotkey1 (small blessing): if this unit has an individual blessing, override the pending spell now
                     local activeBlessID = btn.buffID
                     if mousebutton == "Hotkey1" then
                         local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
                         if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
                             local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
                             if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
-                                SpellStopTargeting()
                                 CastSpell(indSmall, BOOKTYPE_SPELL)
                                 activeBlessID = individualID
                             end
