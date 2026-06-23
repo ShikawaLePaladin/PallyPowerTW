@@ -1436,6 +1436,7 @@ function PallyPower_UpdateUI()
                     local nhave = 0
                     local ndead = 0
                     local naway = 0
+                    local nhave_class = 0  -- tracks class blessing specifically for timer cleanup
                     if CurrentBuffs[class] then
                         for member, stats in CurrentBuffs[class] do
                             if stats["visible"] then
@@ -1447,13 +1448,18 @@ function PallyPower_UpdateUI()
                                 elseif stats[assign[class]] then
                                     hasBuffs = true
                                 end
-                                
+                                -- Track class blessing separately so the GB timer isn't cleared
+                                -- just because someone's individual assignment isn't fulfilled yet
+                                if stats[assign[class]] then
+                                    nhave_class = nhave_class + 1
+                                end
+
                                 if not hasBuffs then
                                     if UnitIsDeadOrGhost(member) then
                                         ndead = ndead + 1
                                         tinsert(btn.dead, stats["name"])
                                     else
-                                        -- If Salvation is assigned, user is tank, and no individual blessings, do not count against nneed 
+                                        -- If Salvation is assigned, user is tank, and no individual blessings, do not count against nneed
                                         -- ( So the buffbar button stays green even with tank missing Salvation)
                                         if not (assign[class] == 2 and PallyPower_Tanks[stats["name"]] == true and GetNormalBlessings(namePlayer, class, UnitName(member)) == -1) then
                                             nneed = nneed + 1
@@ -1467,13 +1473,15 @@ function PallyPower_UpdateUI()
                             else
                                 tinsert(btn.range, stats["name"])
                                 nhave = nhave + 1
+                                nhave_class = nhave_class + 1
                                 naway = naway + 1
                             end
                         end
                     end
 
-                    --Cleanup timers if no Have (skip while post-cast protection is active)
-                    if nhave == 0 and recentCastProtection <= 0 then
+                    -- Cleanup timers only when nobody has the class blessing at all
+                    -- (skip while post-cast protection is active)
+                    if nhave_class == 0 and recentCastProtection <= 0 then
                         LastCast[assign[btn.classID] .. btn.classID] = nil
                         if CurrentBuffs[btn.classID] then
                             for unit, stats in CurrentBuffs[btn.classID] do
