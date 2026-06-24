@@ -3276,6 +3276,13 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
                 end
                 LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
             end
+            -- When an individual blessing overrides the class spell, also mark the class key
+            -- so RecentCast activates on the next click and this unit gets skipped in LastCastOn
+            if activeBlessID ~= btn.buffID then
+                if LastCast[btn.buffID .. btn.classID] == nil or LastCast[btn.buffID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
+                    LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                end
+            end
 
             if not skipclear and not RecentCast then
                 LastCastOn[btn.classID] = {}
@@ -3477,6 +3484,13 @@ function PallyPower_AutoBless(mousebutton)
                             end
                         end
                         LastCastPlayer[stats.name] = PALLYPOWER_NORMALBLESSINGDURATION
+                    end
+                    -- When an individual blessing overrides the class spell, also mark the class key
+                    -- so RecentCast activates on the next hotkey press and this unit gets skipped
+                    if activeBlessID ~= btn.buffID then
+                        if LastCast[btn.buffID .. btn.classID] == nil or LastCast[btn.buffID .. btn.classID] < PALLYPOWER_NORMALBLESSINGDURATION then
+                            LastCast[btn.buffID .. btn.classID] = PALLYPOWER_NORMALBLESSINGDURATION
+                        end
                     end
                     if not skipclear and not RecentCast then
                         LastCastOn[btn.classID] = {}
