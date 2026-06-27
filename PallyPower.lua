@@ -2123,8 +2123,9 @@ function PallyPower_ParseMessage(sender, msg)
             if (not PallyPower_Assignments[name]) then
                 PallyPower_Assignments[name] = {}
             end
-            class = class + 0
-            skill = skill + 0
+            class = tonumber(class)
+            skill = tonumber(skill)
+            if not class or not skill then return false end
             PallyPower_Assignments[name][class] = skill
             if name == nameplayer then
                 if (PallyPower_NormalAssignments[nameplayer] and PallyPower_NormalAssignments[nameplayer][class]) then
@@ -2145,7 +2146,8 @@ function PallyPower_ParseMessage(sender, msg)
             if (not PallyPower_AuraAssignments[name]) then
                 PallyPower_AuraAssignments[name] = {}
             end
-            skill = skill + 0
+            skill = tonumber(skill)
+            if not skill then return false end
             PallyPower_AuraAssignments[name] = skill
             uiDirty = true
         end
@@ -2157,7 +2159,8 @@ function PallyPower_ParseMessage(sender, msg)
             if (not PallyPower_SealAssignments[name]) then
                 PallyPower_SealAssignments[name] = -1
             end
-            skill = skill + 0
+            skill = tonumber(skill)
+            if not skill then return false end
             PallyPower_SealAssignments[name] = skill
             uiDirty = true
         end
@@ -2169,7 +2172,8 @@ function PallyPower_ParseMessage(sender, msg)
             if (not PallyPower_Assignments[name]) then
                 PallyPower_Assignments[name] = {}
             end
-            skill = skill + 0
+            skill = tonumber(skill)
+            if not skill then return false end
             for class = 0, 9 do
                 PallyPower_Assignments[name][class] = skill
                 if name == nameplayer then
