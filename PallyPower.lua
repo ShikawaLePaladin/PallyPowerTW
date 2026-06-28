@@ -460,8 +460,6 @@ function PallyPower_AdjustIcons()
 end
 
 function PallyPower_OnEvent(event,arg1)
-    local type, id
-
     if (event == "SPELLS_CHANGED" or event == "PLAYER_ENTERING_WORLD") then
         PallyPower_AdjustIcons()
         PallyPower_ScanSpells()
@@ -829,7 +827,7 @@ function PallyPowerGrid_Update(tdiff)
                     getglobal("PallyPowerFramePlayer" .. i .. "Icon" .. id):Show()
                     getglobal("PallyPowerFramePlayer" .. i .. "Skill" .. id):Show()
                     txt = skills[id]["rank"]
-                    if (skills[id]["talent"] + 0 > 0) then
+                    if ((tonumber(skills[id]["talent"]) or 0) > 0) then
                         txt = txt .. "+" .. skills[id]["talent"]
                     end
                     getglobal("PallyPowerFramePlayer" .. i .. "Skill" .. id):SetText(txt)
@@ -843,7 +841,7 @@ function PallyPowerGrid_Update(tdiff)
                     getglobal("PallyPowerFramePlayer" .. i .. "Icon" .. id):Show()
                     getglobal("PallyPowerFramePlayer" .. i .. "Skill" .. id):Show()
                     txt = AllPallysAuras[name][id-6].rank
-                    if (AllPallysAuras[name][id-6].talent + 0 > 0) then
+                    if ((tonumber(AllPallysAuras[name][id-6].talent) or 0) > 0) then
                         txt = txt .. "+" .. AllPallysAuras[name][id-6].talent
                     end
                     getglobal("PallyPowerFramePlayer" .. i .. "Skill" .. id):SetText(txt)
@@ -2045,22 +2043,20 @@ function PallyPower_ParseMessage(sender, msg)
             PallyPower_Assignments[sender] = {}
             AllPallys[sender] = {}
             local _, _, numbers, assign = string.find(msg, "SELF ([0-9n]*)@?([0-9n]*)")
+            numbers = numbers or ""
             for id = 0, 5 do
-                rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
-                talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
-                if not (rank == "n") then
+                local rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
+                local talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
+                if rank ~= "n" and rank ~= "" then
                     AllPallys[sender][id] = {}
                     AllPallys[sender][id]["rank"] = rank
-                    AllPallys[sender][id]["talent"] = talent
+                    AllPallys[sender][id]["talent"] = tonumber(talent) or 0
                 end
             end
             if assign then
                 for id = 0, 9 do
-                    tmp = string.sub(assign, id + 1, id + 1)
-                    if (tmp == "n" or tmp == "") then
-                        tmp = -1
-                    end
-                    PallyPower_Assignments[sender][id] = tmp + 0
+                    local tmp = string.sub(assign, id + 1, id + 1)
+                    PallyPower_Assignments[sender][id] = tonumber(tmp) or -1
                 end
             end
             uiDirty = true
@@ -2069,24 +2065,20 @@ function PallyPower_ParseMessage(sender, msg)
             PallyPower_AuraAssignments[sender] = {}
             AllPallysAuras[sender] = {}
             local _, _, numbers, assign = string.find(msg, "ASELF ([0-9n]*)@?([0-9n]*)")
+            numbers = numbers or ""
             for id = 0, 6 do
-                rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
-                talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
-                if not (rank == "n") then
+                local rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
+                local talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
+                if rank ~= "n" and rank ~= "" and PallyPower_AuraID[id] then
                     AllPallysAuras[sender][id] = {}
-                    if PallyPower_AuraID[id] then
-                        AllPallysAuras[sender][id]["name"] = PallyPower_AuraID[id]
-                        AllPallysAuras[sender][id]["rank"] = rank
-                        AllPallysAuras[sender][id]["talent"] = talent
-                    end
+                    AllPallysAuras[sender][id]["name"] = PallyPower_AuraID[id]
+                    AllPallysAuras[sender][id]["rank"] = rank
+                    AllPallysAuras[sender][id]["talent"] = tonumber(talent) or 0
                 end
             end
             if assign then
-                tmp = string.sub(assign, 1, 1)
-                if (tmp == "n" or tmp == "") then
-                    tmp = -1
-                end
-                PallyPower_AuraAssignments[sender] = tmp + 0
+                local tmp = string.sub(assign, 1, 1)
+                PallyPower_AuraAssignments[sender] = tonumber(tmp) or -1
             end
             uiDirty = true
         end
@@ -2094,24 +2086,20 @@ function PallyPower_ParseMessage(sender, msg)
             PallyPower_SealAssignments[sender] = -1
             AllPallysSeals[sender] = {}
             local _, _, numbers, assign = string.find(msg, "SSELF ([0-9n]*)@?([0-9n]*)")
+            numbers = numbers or ""
             for id = 0, 5 do
-                rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
-                talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
-                if not (rank == "n") then
+                local rank = string.sub(numbers, id * 2 + 1, id * 2 + 1)
+                local talent = string.sub(numbers, id * 2 + 2, id * 2 + 2)
+                if rank ~= "n" and rank ~= "" and PallyPower_SealID[id] then
                     AllPallysSeals[sender][id] = {}
-                    if PallyPower_SealID[id] then
-                        AllPallysSeals[sender][id]["name"] = PallyPower_SealID[id]
-                        AllPallysSeals[sender][id]["rank"] = rank
-                        AllPallysSeals[sender][id]["talent"] = talent
-                    end
+                    AllPallysSeals[sender][id]["name"] = PallyPower_SealID[id]
+                    AllPallysSeals[sender][id]["rank"] = rank
+                    AllPallysSeals[sender][id]["talent"] = tonumber(talent) or 0
                 end
             end
             if assign then
-                tmp = string.sub(assign, 1, 1)
-                if (tmp == "n" or tmp == "") then
-                    tmp = -1
-                end
-                PallyPower_SealAssignments[sender] = tmp + 0
+                local tmp = string.sub(assign, 1, 1)
+                PallyPower_SealAssignments[sender] = tonumber(tmp) or -1
             end
             uiDirty = true
         end
@@ -2207,21 +2195,21 @@ function PallyPower_ParseMessage(sender, msg)
         if string.find(msg, "^SYMCOUNT ([0-9]*)") then
             local _, _, count = string.find(msg, "^SYMCOUNT ([0-9]*)")
             if AllPallys[sender] then
-                if count == nil or count == "0" then
-                    AllPallys[sender]["symbols"] = 0
-                else
-                    AllPallys[sender]["symbols"] = count
-                end
+                AllPallys[sender]["symbols"] = tonumber(count) or 0
             else
                 PallyPower_SendMessage("REQ")
             end
         end
 	    if strfind(msg, "^COOLDOWNS ([0-9]*)") then
             local _, _, cooldowns = string.find(msg, "^COOLDOWNS ([0-9]*)")
-            local diAvailable = string.sub(cooldowns, 1, 1)
-            local lhAvailable = string.sub(cooldowns, 2, 2)
-            AllPallys[sender]["DivineIntervention"] = (diAvailable == "1")
-            AllPallys[sender]["LayOnHands"] = (lhAvailable == "1")
+            if AllPallys[sender] and cooldowns then
+                local diAvailable = string.sub(cooldowns, 1, 1)
+                local lhAvailable = string.sub(cooldowns, 2, 2)
+                AllPallys[sender]["DivineIntervention"] = (diAvailable == "1")
+                AllPallys[sender]["LayOnHands"] = (lhAvailable == "1")
+            else
+                PallyPower_SendMessage("REQ")
+            end
         end
         if string.find(msg, "FREEASSIGN YES") then
             if AllPallys[sender] then
@@ -2292,7 +2280,11 @@ function PallyPower_ParseMessage(sender, msg)
         end
         if string.find(msg, "^VERSION") then
             local  _, _, msgVer = string.find(msg, "^VERSION (.*)")
-            if msgVer > PallyPower_Version and not(versionBumpDisplayed) then
+            -- Numeric compare with nil guard: msgVer can be nil (malformed message) and
+            -- PallyPower_Version is a string ("1.40"), so a raw '>' would crash or mis-rank.
+            local mv = tonumber(msgVer)
+            local cur = tonumber(PallyPower_Version)
+            if mv and cur and mv > cur and not(versionBumpDisplayed) then
                 versionBumpDisplayed = true
                 DEFAULT_CHAT_FRAME:AddMessage(PALLYPOWER_MESSAGE_NEWVERSION.." ("..msgVer..")")
             end
@@ -2414,8 +2406,9 @@ function PallyPowerGridButton_OnClick(btn, mouseBtn)
     local _, _, pnum, class = string.find(btn:GetName(), "PallyPowerFramePlayer(.+)Class(.+)")
     if class == "A" then class = 10 end
     if class == "S" then class = 11 end
-    pnum = pnum + 0
-    class = class + 0
+    pnum = tonumber(pnum)
+    class = tonumber(class)
+    if not pnum or not class then return end
     pname = getglobal("PallyPowerFramePlayer" .. pnum .. "Name"):GetText()
     if not PallyPower_CanControl(pname) then
         return false
@@ -3242,6 +3235,19 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
             end
         end
 
+        -- Determine this unit's assigned blessing (individual if set, else class) WITHOUT casting yet.
+        -- Do NOT CastSpell here: re-casting the spell already pending from the initial CastSpell()
+        -- before the loop would TOGGLE targeting off (CastSpell on the pending spell cancels it),
+        -- making SpellCanTargetUnit fail for allies. We only need the ID now; the actual override
+        -- cast happens after the targeting check, and it is used for the LastCast bookkeeping.
+        local activeBlessID = btn.buffID
+        if mousebtn == "RightButton" then
+            local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
+            if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
+                activeBlessID = individualID
+            end
+        end
+
         if
             (SpellCanTargetUnit(unit) or UnitIsUnit(unit, "player")) and
                 (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
@@ -3250,17 +3256,11 @@ function PallyPowerBuffButton_OnClick(btn, mousebtn)
         then
             PP_Debug("Trying to cast on " .. unit)
 
-            -- For right-click: if this unit has an individual blessing, override the pending spell now
-            local activeBlessID = btn.buffID
-            if mousebtn == "RightButton" then
-                local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
-                if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
-                    local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
-                    if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
-                        CastSpell(indSmall, BOOKTYPE_SPELL)
-                        activeBlessID = individualID
-                    end
-                end
+            -- Targeting is validated: now switch the pending spell to the individual blessing if this
+            -- unit has one. It is a DIFFERENT spell than the pending class spell, so this switches the
+            -- cursor (does NOT toggle targeting off) and SpellTargetUnit then casts the individual.
+            if mousebtn == "RightButton" and activeBlessID ~= btn.buffID and AllPallys[UnitName("player")][activeBlessID] then
+                CastSpell(AllPallys[UnitName("player")][activeBlessID]["idsmall"], BOOKTYPE_SPELL)
             end
 
             SpellTargetUnit(unit)
@@ -3451,6 +3451,19 @@ function PallyPower_AutoBless(mousebutton)
                     end
                 end
 
+                -- Determine this unit's assigned blessing (individual if set, else class) WITHOUT casting yet.
+                -- Do NOT CastSpell here: re-casting the spell already pending from the initial CastSpell()
+                -- would TOGGLE targeting off, making SpellCanTargetUnit fail for allies. We only need the
+                -- ID now; the actual override cast happens after the targeting check, and it is used for
+                -- the LastCast bookkeeping.
+                local activeBlessID = btn.buffID
+                if mousebutton == "Hotkey1" then
+                    local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
+                    if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
+                        activeBlessID = individualID
+                    end
+                end
+
                 if
                         (SpellCanTargetUnit(unit) or UnitIsUnit(unit, "player")) and
                             (not UnitIsDeadOrGhost(unit)) and PallyPower_CheckTargetLoS(unit) and
@@ -3459,17 +3472,10 @@ function PallyPower_AutoBless(mousebutton)
                 then
                     PP_Debug("Trying to cast on " .. unit)
 
-                    -- For Hotkey1 (small blessing): if this unit has an individual blessing, override the pending spell now
-                    local activeBlessID = btn.buffID
-                    if mousebutton == "Hotkey1" then
-                        local individualID = GetNormalBlessings(UnitName("player"), btn.classID, stats.name)
-                        if individualID ~= -1 and individualID ~= btn.buffID and AllPallys[UnitName("player")][individualID] then
-                            local indSmall = AllPallys[UnitName("player")][individualID]["idsmall"]
-                            if GetSpellCooldown(indSmall, BOOKTYPE_SPELL) < 1 then
-                                CastSpell(indSmall, BOOKTYPE_SPELL)
-                                activeBlessID = individualID
-                            end
-                        end
+                    -- Targeting validated: switch the pending spell to the individual blessing if this unit
+                    -- has one (different spell, so it does NOT toggle targeting off), then cast.
+                    if mousebutton == "Hotkey1" and activeBlessID ~= btn.buffID and AllPallys[UnitName("player")][activeBlessID] then
+                        CastSpell(AllPallys[UnitName("player")][activeBlessID]["idsmall"], BOOKTYPE_SPELL)
                     end
 
                     SpellTargetUnit(unit)
@@ -3700,8 +3706,9 @@ function PallyPowerGridButton_OnMouseWheel(btn, arg1)
     local _, _, pnum, class = string.find(btn:GetName(), "PallyPowerFramePlayer(.+)Class(.+)")
     if class == "A" then class = PALLYPOWER_AURA_CLASS end
     if class == "S" then class = PALLYPOWER_SEAL_CLASS end
-    pnum = pnum + 0
-    class = class + 0
+    pnum = tonumber(pnum)
+    class = tonumber(class)
+    if not pnum or not class then return end
     pname = getglobal("PallyPowerFramePlayer" .. pnum .. "Name"):GetText()
     if not PallyPower_CanControl(pname) then
         return false
