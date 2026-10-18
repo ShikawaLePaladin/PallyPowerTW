@@ -443,6 +443,9 @@ function PallyPower_AdjustIcons()
         BuffIconSmall[5] = "Interface\\"..icons_prefix.."Icons\\Spell_Nature_LightningShield"
     end
 
+    -- [OctoWoW] icons changed: rebuild the texture -> blessing id lookup on next use
+    PallyPower_BuffTextureIDCache = nil
+
     PallyPower_ClassTexture[0] = "Interface\\"..icons_prefix.."Icons\\Warrior"
     PallyPower_ClassTexture[1] = "Interface\\"..icons_prefix.."Icons\\Rogue"
     PallyPower_ClassTexture[2] = "Interface\\"..icons_prefix.."Icons\\Priest"
@@ -3093,6 +3096,11 @@ function PallyPower_GetClassID(class)
     return -1
 end
 
+-- [OctoWoW] This runs for every buff of every raid member on each UNIT_AURA. It
+-- used to run ~25 string.gsub calls per buff (a new string each); it now does one
+-- table lookup. The lookup is rebuilt when the icons or the HD setting change.
+PallyPower_BuffTextureIDCache = nil
+local buffTextureIDCachePrefix = nil
 function PallyPower_GetBuffTextureID(text)
     local icons_prefix
     if PP_PerUser.usehdicons == true then
@@ -3101,18 +3109,21 @@ function PallyPower_GetBuffTextureID(text)
         icons_prefix = "AddOns\\PallyPowerTW\\"
     end
 
-    for id, name in BuffIcon do
-        if (string.gsub(name,icons_prefix,"") == text) then
-            return id
+    local cache = PallyPower_BuffTextureIDCache
+    if not cache or buffTextureIDCachePrefix ~= icons_prefix then
+        cache = {}
+        -- BuffIconSmall first so BuffIcon wins on duplicates, as before
+        for id, name in BuffIconSmall do
+            cache[(string.gsub(name, icons_prefix, ""))] = id
         end
-    end
-    -- Check also the small buffs
-    for id, name in BuffIconSmall do
-        if (string.gsub(name,icons_prefix,"") == text) then
-            return id
+        for id, name in BuffIcon do
+            cache[(string.gsub(name, icons_prefix, ""))] = id
         end
+        PallyPower_BuffTextureIDCache = cache
+        buffTextureIDCachePrefix = icons_prefix
     end
-    return -2
+
+    return cache[text] or -2
 end
 
 -- Individual blessings pass. Finds the first member of the class who has an individual blessing
