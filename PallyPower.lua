@@ -2396,9 +2396,11 @@ function PallyPowerBuffBar_MouseUp()
         PallyPowerBuffBar.isMoving = false
     end
     if PP_PerUser.frameslocked == false then
+        -- startPosX/Y n'existent que si MouseDown a demarre un deplacement (bouton gauche/droit, barre non verrouillee) : sinon c'est un simple clic
         if
-            abs(PallyPowerBuffBar.startPosX - PallyPowerBuffBar:GetLeft()) < 2 and
-                abs(PallyPowerBuffBar.startPosY - PallyPowerBuffBar:GetTop()) < 2
+            (not PallyPowerBuffBar.startPosX) or (not PallyPowerBuffBar.startPosY) or
+                (abs(PallyPowerBuffBar.startPosX - PallyPowerBuffBar:GetLeft()) < 2 and
+                    abs(PallyPowerBuffBar.startPosY - PallyPowerBuffBar:GetTop()) < 2)
         then
             PP_SelectedPally = UnitName("player")
             PallyPowerFrame:Show()
